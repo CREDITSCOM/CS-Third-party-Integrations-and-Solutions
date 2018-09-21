@@ -20,7 +20,17 @@ The general rules for contribution are listed <a href="https://github.com/CREDIT
 <li>
 <ul>
 <li>Сredits currency plugin</li>
-<li><a href="">Link to project</a></li>
+<li><a href="https://github.com/alienable/credits_currency_plugin">Link to project</a></li>
+<li>Author: Alexander K.</li>
+<li>Telegram: @kupriyanov_a</li>
+<li><a href="https://www.linkedin.com/in/alexanderkupriyanov/">LinkedIn</a></li>
+<li><a href="https://www.facebook.com/alexandrkupriyanov">Facebook</a></li>
+</ul>
+</li>
+<li>
+<ul>
+<li>CS to The Moon Game</li>
+<li><a href="https://github.com/alienable/cs_to_the_moon_game">Link to project</a></li>
 <li>Author: Alexander K.</li>
 <li>Telegram: @kupriyanov_a</li>
 <li><a href="https://www.linkedin.com/in/alexanderkupriyanov/">LinkedIn</a></li>
