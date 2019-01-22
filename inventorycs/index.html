@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>InventoryCS - dApp on Credits blockchain</title>
+		<script src="js/jquery-1.10.2.min.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
+		<link rel="stylesheet" href="css/inventorycs.css" />
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/login.js"></script>
+		<script src="API/nacl.min.js"></script>
+		<script src="API/Signature.js"></script>
+	</head>
+	<body onload="sessionExist();">
+		<br />
+		<div class="container">
+			<h2 align="center">InventoryCS</h2>
+			<br />
+			<div class="panel panel-default">
+				<div class="panel-heading">Login</div>
+				<div class="panel-body">
+					<form method="#" id="formlogin">
+						<div id="error"></div>
+						<div class="form-group">
+							<label>Public key</label>
+							<input type="text" id="puk" name="puk" class="form-control" required />
+						</div>
+						<div class="form-group">
+							<label>Private key</label>
+							<input type="text" id="prk" name="prk" class="form-control" required />
+						</div>
+							<div class="form-group">
+								<label>Enter release 3.4 node ip (function for test purposes only)</label>
+									<div class="input-group">
+								<span class="input-group-addon" id="basic-addon1">IP</span>
+	              <input type="text" id="ip" name="ip" class="form-control" value="169.50.169.11" required />
+								<span class="input-group-addon" id="basic-addon1">Port</span>
+	              <input type="text" id="port" name="port" class="form-control" value="8081" required />
+	                </div>
+							</div>
+						<div class="form-group">
+							<input type="button" id="login" name="login" value="Login" class="btn btn-info" /> 	<button type="button" class="btn btn-info" onclick="NewKey();"/>Generate keypair</button>
+						</div>
+						<div class="form-group">
+							<div id="drop_zone">Drop keyfile here</div>
+							<br /><input type="file" id="files" name="files"/>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<a href="https://www.credits.com" target="_blank">Credits</a> hackathon entry | Product status: MVP
+					<div class="pull-right">
+						<a href="https://t.me/timok93" target="_blank"><img src="img\telegram.svg" alt="Telegram" style="width:16px;height:16px"> @timok93</a> | <a href="https://github.com/tkoen93" target="_blank"><img src="img\github.png" alt="Github" style="width:16px;height:16px"> tkoen93</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
