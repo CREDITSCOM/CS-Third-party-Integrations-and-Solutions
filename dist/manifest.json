@@ -1,0 +1,20 @@
+{
+  "name": "Diadem Network",
+  "short_name": "Diadem Network",
+  "start_url": "/index.html",
+  "scope": ".",
+  "display": "fullscreen",
+  "background_color": "#f3f0f4db",
+  "theme_color": "#84519c",
+  "description": "Leverages blockchain technology from QTUM and Social networks to connect people improving the world by their actions to those willing to support them for it",
+  "dir": "ltr",
+  "lang": "en_US",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "app-icon-32x32.png",
+      "type": "images/png",
+      "sizes": "32x32"
+    }
+  ]
+}
