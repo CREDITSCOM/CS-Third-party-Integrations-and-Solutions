@@ -39,7 +39,8 @@ public class Contract extends SmartContract {
  HashMap<Integer, List<Object>> stock;
 
 
- public Contract() {
+ public Contract(String initiator) {
+ super(initiator);
  deployer = "${sessionStorage.getItem('PublicKey')}";
  stock = new HashMap<>();
  }
@@ -124,11 +125,11 @@ public class Contract extends SmartContract {
   let id = txid(Connect(), Base58.decode(sessionStorage.getItem('PublicKey')));
   id = id + 1;
 
-    let Trans = ConstructTransaction(Connect(), {
+    let Trans = SignCS.ConstructTransaction(SignCS.Connect(), {
         id: id,
         amount: "0,0",
         currency: 1,
-        fee: "1.0",
+        fee: "100.0",
         source: sessionStorage.getItem('PublicKey'),
         Priv: sessionStorage.getItem('PrivateKey'),
         smart: {
@@ -144,8 +145,9 @@ public class Contract extends SmartContract {
         return;
     }
 
-    Connect().TransactionFlow(Trans, function (r) {
+    SignCS.Connect().TransactionFlow(Trans, function (r) {
         if ("Success" === r.status.message.split(" ")[0]) {
+          console.log(r);
           showContracts();
           $('#createnew').show();
         }
@@ -167,7 +169,7 @@ function createTransaction(method, params, callback) { // Function to create a s
     params = params;
   }
 
-  let Trans = ConstructTransaction(Connect(), {
+  let Trans = SignCS.ConstructTransaction(SignCS.Connect(), {
                   id: id,
                   amount: 0,
                   currency: 1,
@@ -182,7 +184,7 @@ function createTransaction(method, params, callback) { // Function to create a s
                   }
               });
 
-          Connect().TransactionFlow(Trans, function (res) { // Transaction result
+          SignCS.Connect().TransactionFlow(Trans, function (res) { // Transaction result
               let mess = "message: " + res.status.message.split(" ")[0];
           if (res.smart_contract_result !== null) { // If transaction went through
             if (res.smart_contract_result.v_bool !== null) {
@@ -308,8 +310,18 @@ Connect().SmartContractsListGet(Base58.decode(sessionStorage.getItem('PublicKey'
     let select = $("<select></select>").attr("id", "selectcontract").attr("onchange", "selectContract();");
     select.append($("<option></option>").attr("value", "").text("Select smart contract"));
       for (let index in res.smartContractsList) {
-        smartaddress = Base58.encode(byte_array(res.smartContractsList[index].address));
-        select.append($("<option></option>").attr("value", smartaddress).text(smartaddress));
+        Connect().SmartContractDataGet(Base58.decode(Base58.encode(byte_array(res.smartContractsList[index].address))), function (conres) {
+          cont = false;
+          for(let indexcontract in conres.methods) {
+            if(conres.methods[indexcontract].name == 'checkValidity') { // This function in the smart contract needs to be present. If not, contract is not valid for this dApp.
+              cont = true;
+            }
+          }
+          if(cont) {
+            smartaddress = Base58.encode(byte_array(res.smartContractsList[index].address));
+            select.append($("<option></option>").attr("value", smartaddress).text(smartaddress));
+          }
+        });
       }
         $('#contracts').html(select);
   } else { // If there are no smart contracts for this public key, show the following message.
@@ -321,6 +333,7 @@ Connect().SmartContractsListGet(Base58.decode(sessionStorage.getItem('PublicKey'
 function walletBalance() { // Function to show balance of public key.
 $('#balance').html('<img src="img/loader.svg" width="20" height="20">');
 Connect().WalletBalanceGet(Base58.decode(sessionStorage.getItem('PublicKey')), function (r) {
+  console.log(r);
     let fraction = String(r.balance.fraction / Math.pow(10, 18)).split(".")[1];
 
     if (fraction === undefined)
