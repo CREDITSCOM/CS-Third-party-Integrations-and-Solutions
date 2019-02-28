@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script src="../jquery.min.js"></script>
+    <script src="./bootstrap.min.js"></script>
+    <script src="./scripts.js"></script>
+    <script src="./nacl.min.js"></script>
+    <script src="./Signature.js"></script>
+    <script src="./API.js"></script>
+    <script src="./api_types.js"></script>
+    <script src="./general_types.js"></script>
+    <script src="./thrift.js"></script>
+    <script src="./aes.js"></script>
+    <script src="./pbkdf2.js"></script>
+</head>
+<body>
+	<style>
+  ::-webkit-scrollbar {
+display: none;
+}
+		body {
+			margin: 0px;
+		}
+		main{
+			font-family: 'Roboto', sans-serif;
+		}
+		.body{
+			box-sizing: border-box;
+			padding: 8px 18px;
+			border-radius: 3px 3px 0px 0px;
+			background-color: #ffffff;
+			box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.18);
+		}
+		.main{
+			min-width: 472px;
+		}
+		.header{
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 8px;
+		}
+		.header > *{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.logo img{
+			width: 38px;
+			height: 38px;
+			margin-right: 10px;
+		}
+		.logo span{
+			font-size: 24px;
+			color: #010101;
+      vertical-align: middle;
+		}
+		.version span{
+			width: 90px;
+			height: 16px;
+			border-radius: 6px;
+			background-color: #6aef6e;
+			font-size: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-weight: 600;
+      float: right;
+		}
+
+    #drop_zone {
+    border: 2px dashed #bbb;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    font: 20pt bold 'Vollkorn';
+    color: #bbb;
+    }
+
+    .label {
+      min-width: 40px !important;
+      display: inline-block !important
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      grid-template-areas: "logo version" "logo button";
+    }
+
+    .logo { grid-area: logo; width: 350px; }
+
+    .version { grid-area: version; }
+
+    .button { grid-area: button; }
+
+    .amount {
+      max-width: 250px;
+      white-space: nowrap;
+    }
+
+    a:link, a:visited, a:hover, a:active {
+      color: black;
+      text-decoration: none;
+    }
+
+	</style>
+
+	<main>
+		<div class="main">
+			<div class="body">
+				<div class="header">
+          <div class="grid-container">
+            <div class="logo"><a href="https://credits.com/" target="blank"><img src='../img/logocredits.png'></a>
+						<span><a href="https://credits.com/" target="blank">Credits</a></span>
+            </div>
+            <div class="version"><span>
+							Testnet 4.1 wallet
+						</span>
+            </div>
+            <div class="button" id="logoutbutton" style="display:none"><div class="pull-right"><button type="button" name="logout" id="logout" class="btn btn-danger btn-xs">Logout</button></div></div>
+          </div>
+				</div>
+			</div>
+      <div id="extensionlogin" style="display:none">
+        <div class="container">
+          <br />
+    			<div class="panel panel-default">
+    				<div class="panel-heading">Login</div>
+    				<div class="panel-body">
+    					<form method="#" id="formlogin">
+    						<div id="error"></div>
+    						<div class="form-group">
+                  <div class="input-group">
+    							<span class="input-group-addon" id="basic-addon1">Public key</span>
+    							<input type="text" id="puk" name="puk" class="form-control" required />
+                </div>
+    						</div>
+    						<div class="form-group">
+                  <div class="input-group">
+    							<span class="input-group-addon" id="basic-addon1">Private key</span>
+    							<input type="text" id="prk" name="prk" class="form-control" required />
+                </div>
+    						</div>
+                <div class="form-group" style="display:none">
+  								<label>Enter release 4.1 node ip</label>
+  									<div class="input-group">
+  								<span class="input-group-addon" id="basic-addon1">IP</span>
+  	              <input type="text" id="ip" name="ip" class="form-control" value="161.156.96.20" required />
+                </div>
+                <div class="input-group">
+  								<span class="input-group-addon" id="basic-addon1">Port</span>
+  	              <input type="text" id="port" name="port" class="form-control" value="8081" required />
+                </div>
+  	                </div>
+    						<div class="form-group">
+    							<input type="button" id="login" name="login" value="Login" class="btn btn-info" /> 	<input type="button" id="genkey" name="genkey" value="Generate keypair" class="btn btn-info" />
+    						</div>
+    						<div class="form-group">
+    							<div id="drop_zone">Drop keyfile here</div>
+    							<input type="file" id="files" name="files"/>
+    						</div>
+    					</form>
+              </div>
+    				</div>
+    			</div>
+    		</div>
+        <div id="newwallet" style="display:none">
+          <div class="container">
+            <br />
+      			<div class="panel panel-default">
+      				<div class="panel-heading">Generate keypair</div>
+      				<div class="panel-body">
+      					<form method="#" id="generatekeys">
+      						<div id="generror"></div>
+      						<div class="form-group">
+                    <div class="input-group">
+      							<span class="input-group-addon" id="basic-addon1">Password</span>
+      							<input type="password" id="pass1" name="pass1" class="form-control" required />
+                  </div>
+      						</div>
+                  <div class="form-group">
+                    <div class="input-group">
+      							<span class="input-group-addon" id="basic-addon1">Confirm password</span>
+      							<input type="password" id="pass2" name="pass2" class="form-control" required />
+                  </div>
+      						</div>
+      						<div class="form-group">
+      						<input type="button" id="generate" name="generate" value="Create wallet" class="btn btn-info" />
+                </div>
+                <div class="form-group">
+                  <button type="button" name="logout" id="logout" class="btn btn-danger btn-xs">Return to login</button></div>
+      						</div>
+      					</form>
+                </div>
+      				</div>
+      			</div>
+      		</div>
+          <div id="openwallet" style="display:none">
+            <div class="container">
+              <br />
+        			<div class="panel panel-default">
+        				<div class="panel-heading">Encrypted key</div>
+        				<div class="panel-body">
+        						<div id="unlockerror"></div>
+        						<div class="form-group">
+                      <div class="input-group">
+        							<span class="input-group-addon" id="basic-addon1">Password</span>
+        							<input type="password" id="unlockpass" name="unlockpass" class="form-control" required />
+                    </div>
+        						</div>
+        						<div class="form-group">
+        						<input type="button" id="openwal" name="openwal" value="Unlock wallet" class="btn btn-info" />
+        						</div>
+                    <div class="form-group">
+                      <button type="button" name="logout" id="logout" class="btn btn-danger btn-xs">Return to login</button>
+                    </div>
+        					</form>
+                  </div>
+        				</div>
+        			</div>
+        		</div>
+      </div>
+      <div id="extensionindex" style="display:none">
+        <div class="container">
+          <br />
+    			<div class="panel panel-default">
+    				<div class="panel-body" id="account">
+              <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a href="#">Account</a></li>
+                <li role="presentation"><a href="#" id="txhistory">TX history</a></li>
+              </ul>
+              <div class="panel panel-default">
+              <div class="panel-body">
+                <div id="balance"></div>
+                <div id="copyKey"><a data-toggle="popover" data-content="Copy key" data-placement="bottom"><img src="../img/copy.png" id="copy" alt="Copy" style="width:16px;height:16px"></a>
+                  <a data-toggle="popover" data-content="Export unencrypted keyfile" data-placement="right"><button type="button" name="exportkeyfile" id="exportkeyfile" class="btn btn-default btn-xs">Export raw keyfile</button></a></div>
+              </div>
+            </div>
+            <div id="initialTX">
+              <div id="txerror"></div>
+                <div class="form-group">
+                  <h3>Create transaction</h3>
+                </div>
+    						<div class="form-group">
+                  <div class="input-group">
+    						       <span class="input-group-addon" id="basic-addon1">To</span>
+    						       <input type="text" id="tokey" name="tokey" class="form-control" placeholder="Receiver's address" required />
+                  </div>
+    						</div>
+    						<div class="form-group">
+                  <div class="input-group">
+    							  <input type="text" id="tosend" name="tosend" class="form-control" placeholder="Amount" required />
+                    <span class="input-group-addon" id="basic-addon1">CS</span>
+                  </div>
+    						</div>
+                <div class="form-group">
+                  <div class="input-group">
+    							  <input type="text" id="maxfee" name="maxfee" class="form-control" placeholder="Maximum fee" value="1.0" disabled required />
+                    <span class="input-group-addon" id="basic-addon1">CS Fee</span>
+                  </div>
+    						</div>
+    						<div class="form-group">
+    							<input type="button" id="createTX" name="createTX" value="Create transaction" class="btn btn-success" />
+    						</div>
+    				</div>
+            <div id="confirmTX" style="display:none">
+                <div class="form-group">
+                  <h3>Confirm transaction</h3>
+                </div>
+    						<div class="form-group">
+                  <div class="input-group">
+    						       <span class="input-group-addon" id="transactionto"></span>
+                  </div>
+    						</div>
+    						<div class="form-group">
+                  <div class="input-group">
+    							  <span class="input-group-addon" id="tosendto"></span>
+                    <span class="input-group-addon" id="basic-addon1">CS</span>
+                  </div>
+    						</div>
+                <div class="form-group">
+                  <div class="input-group">
+    							  <span class="input-group-addon" id="maxfeeto"></span>
+                    <span class="input-group-addon" id="basic-addon1">CS Fee</span>
+                  </div>
+    						</div>
+    						<div class="form-group">
+    							<input type="button" id="resetTX" name="resetTX" value="Reset" class="btn btn-danger" /> <input type="button" id="sendTX" name="sendTX" value="Send transaction" class="btn btn-success" />
+    						</div>
+    				</div>
+          </div>
+
+          <div class="panel-body" id="txhis" style="display:none">
+              <ul class="nav nav-tabs">
+                <li role="presentation"><a href="#" id="openaccount">Account</a></li>
+                <li role="presentation" class="active"><a href="#">TX history</a></li>
+              </ul>
+              <div class="panel panel-default">
+              <div class="panel-body" id="txamount" align="center">
+              </div>
+              <div class="panel-body" id="tentx" style="display:none">
+                <table class="table table-condensed">
+                  <thead id="showtxthead">
+                  </thead>
+                  <tbody id="showtx">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+    				</div>
+    			</div>
+    		</div>
+        </div>
+      </div>
+		</div>
+
+	</main>
+</body>
+</html>
