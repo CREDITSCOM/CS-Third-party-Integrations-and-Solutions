@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>InventoryCS - dApp on Credits blockchain</title>
+		<script type="text/javascript" src="API/thrift.js"></script>
+		<script type="text/javascript" src="API/API.js"></script>
+		<script type="text/javascript" src="API/api_types.js"></script>
+		<script type="text/javascript" src="API/nacl.min.js"></script>
+		<script type="text/javascript" src="API/Signature_4_0.js"></script>
+		<script type="text/javascript" src="API/executor_types.js"></script>
+		<script type="text/javascript" src="API/ContractExecutor.js"></script>
+		<script type="text/javascript" src="API/general_types.js"></script>
+		<script type="text/javascript" src="API/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="js/dataTables.bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/inventory.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/dataTables.bootstrap.min.css" />
+		<link rel="stylesheet" href="css/inventorycs.css" />
+		<link rel='shortcut icon' type='image/x-icon' href='img/favicon.ico' />
+	</head>
+	<body onload="checkLogin();">
+		<br />
+		<div class="container">
+			<h2 align="center">InventoryCS</h2>
+
+			<nav class="navbar navbar-inverse">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a href="#" class="navbar-brand">Balance</a>
+					</div>
+					<ul class="nav navbar-nav">
+						<li><a id="balance"></a></li>
+						<li><a href="#" onclick="walletBalance();"><span class="glyphicon glyphicon-refresh"></span></a></li>
+						<li><a id="balancehelp" data-toggle="popover" title="Wallet balance" data-content="" data-placement="bottom"><span class="glyphicon glyphicon-question-sign"></span></a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li id="change"><a href="#" onclick="changeContract();">Change inventory</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="label label-pill label-danger count"></span>Logout</a>
+							<ul class="dropdown-menu">
+								<li><a href="#" onclick="logOut(0);">Logout</a></li>
+							</ul>
+						</li>
+					</ul>
+
+				</div>
+			</nav>
+				<br />
+	<div class="row">
+	<div class="col-md-12" id="errorarea"></div>
+		<div class="col-md-12" id="contractselect">
+	<div class="panel panel-default">
+		<div class="panel-heading"><strong>Select smart contract</strong><div class="pull-right"><a id="balancehelp" data-toggle="popover" title="Smart contract" data-content="To interact with the Credits blockchain a smart contract is needed.<br>Please select a contract or start a new one." data-placement="left"><span class="glyphicon glyphicon-question-sign"></span></a></div></div>
+		<div class="panel-body" align="center">
+			<div id="contracts"></div>
+			<div id="createnew"><a href="#" onclick="DeployContract();">Create new inventory</a></div>
+			</div>
+			</div>
+			</div>
+			<div class="panel-body" align="center" id="loading"></div>
+			<div class="col-lg-12" id="product_datalist">
+				<span id='alert_action'></span>
+				<div class="panel panel-default">
+          <div class="panel-heading">
+          	<div class="row">
+              <div class="col-lg-10 col-md-10 col-sm-8 col-xs-6">
+              	<h3 class="panel-title" id="productlist_title"></h3>
+              </div>
+              <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" align='right'>
+                <button type="button" name="add" id="add_button" class="btn btn-success btn-xs">Add Product</button>
+            	</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="row"><div class="col-sm-12 table-responsive">
+              <table id="product_data" class="table table-bordered table-striped" width="100%"></table>
+          	</div></div>
+          </div>
+        </div>
+			</div>
+		</div>
+		<div class="row">
+				<div class="col-md-12">
+					<a href="https://www.credits.com" target="_blank">Credits</a> hackathon entry | Product status: MVP
+					<div class="pull-right">
+						<a href="https://t.me/timok93" target="_blank"><img src="img\telegram.svg" alt="Telegram" style="width:16px;height:16px"> @timok93</a> | <a href="https://github.com/tkoen93" target="_blank"><img src="img\github.png" alt="Github" style="width:16px;height:16px"> tkoen93</a>
+					</div>
+				</div>
+			</div>
+
+
+
+			<div id="productModal" class="modal fade">
+            <div class="modal-dialog">
+
+                    <div class="modal-content">
+                        <div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+													<a data-toggle="popover" title="Add/edit product" data-content="In this field you can add or edit a product.<br>In case you want to do more than one action, please use the 'add to changelist' button." data-placement="left" class="close"><span class="glyphicon glyphicon-question-sign"></span></a>
+                            <h4 class="modal-title"><i class="fa fa-plus"></i> Add Product</h4>
+                        </div>
+                        <div class="modal-body">
+													<div id="formerror"></div>
+													<input type="hidden" name="row_id" id="row_id" class="form-control" value="0" />
+														<div class="form-group">
+																<label>Enter Product ID</label>
+																<input type="text" name="product_id" id="product_id" class="form-control" required pattern="[+-]?([0-9]*[.])?[0-9]+" />
+														</div>
+                            <div class="form-group">
+                                <label>Enter Product Name</label>
+                                <input type="text" name="product_name" id="product_name" class="form-control" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Enter Product Quantity</label>
+                                <input type="text" name="product_quantity" id="product_quantity" class="form-control" required pattern="[+-]?([0-9]*[.])?[0-9]+" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+														<input type="submit" name="addlist" id="addlist" class="btn btn-info pull-left" value="Add to changelist" />
+														<input type="hidden" name="product_id" id="product_id" />
+                            <input type="hidden" name="btn_action" id="btn_action" />
+                            <input type="submit" name="action" id="action" class="btn btn-info" value="Add" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+
+				<div id="productDelete" class="modal fade">
+	            <div class="modal-dialog">
+	                <form method="post" id="product_delete">
+	                    <div class="modal-content">
+	                        <div class="modal-header">
+	                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	                            <h4 class="modal-title"><i class="fa fa-plus"></i> Delete product</h4>
+	                        </div>
+	                        <div class="modal-body">
+															<div class="form-group">
+																	<label>Are you sure you want to delete this product?</label>
+																	<input type="hidden" name="delete_id" id="delete_id" class="form-control" value="0" />
+															</div>
+	                        </div>
+	                        <div class="modal-footer">
+	                            <input type="submit" name="action_delete" id="action_delete" class="btn btn-info" value="Yes" />
+	                            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+	                        </div>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+
+					<div id="logoutModal" class="modal fade">
+		            <div class="modal-dialog">
+		                <form method="post" id="product_delete">
+		                    <div class="modal-content">
+		                        <div class="modal-header">
+		                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+		                            <h4 class="modal-titlelogout"><i class="fa fa-plus"></i> Logout</h4>
+		                        </div>
+		                        <div class="modal-body">
+																<div class="form-group">
+																		<label>Some changes have not been saved yet. Are you sure you want to logout?</label>
+																</div>
+		                        </div>
+		                        <div class="modal-footer">
+																<button type="button" class="btn btn-info" onclick="logOut(1);">Yes</button>
+		                            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
+		        </div>
+
+						<div id="m_product_id" style="display:none"></div>
+						<div id="m_product_name" style="display:none"></div>
+						<div id="m_product_quantity" style="display:none"></div>
+
+				<nav class="navbar navbar-default navbar-fixed-bottom" id="showchanges">
+				  <div class="container">
+				    <div class="navbar-header">
+				      <a class="navbar-brand" href="#">Changes</a>
+				    </div>
+
+				    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				      <ul class="nav navbar-nav">
+				        <li><a href="#" id="number">0</a></li>
+								<li><a href="#">changes</a></li>
+				      </ul>
+							<ul class="nav navbar-nav navbar-right">
+								<li><button type="button" name="discardchanges" id="discardchanges_button" class="btn btn-danger btn-xs" onclick="discardChanges();"><span class="glyphicon glyphicon-remove"></span> Discard</button></li>
+								<li><button type="button" name="applychanges" id="applychanges_button" class="btn btn-success btn-xs" onclick="applyChanges();"><span class="glyphicon glyphicon-ok"></span> Confirm</button></li>
+							</ul>
+				    </div><!-- /.navbar-collapse -->
+				  </div><!-- /.container-fluid -->
+				</nav>
+
+		</div>
+	</body>
+</html>

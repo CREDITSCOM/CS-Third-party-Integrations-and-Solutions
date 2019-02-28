@@ -1,0 +1,27 @@
+.popover {
+		width: 400px;
+		max-width: 625px;
+	}
+
+body { padding-bottom: 70px; }
+
+.navbar .navbar-nav {
+  display: inline-block;
+  float: none;
+  vertical-align: top;
+}
+
+.navbar .navbar-collapse {
+  text-align: center;
+}
+
+#drop_zone {
+border: 2px dashed #bbb;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border-radius: 5px;
+padding: 50px;
+text-align: center;
+font: 20pt bold 'Vollkorn';
+color: #bbb;
+}
